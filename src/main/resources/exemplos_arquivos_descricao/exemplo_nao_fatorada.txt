@@ -1,0 +1,17 @@
+@Header
+
+NomeProjeto = "fatoracao";
+Pacote = "br.com.fatorada";
+Versao = "1.0.0.0";
+TransformarGramatica = true;
+
+@Lexico
+
+a = %%"a"%%;
+b = %%"b"%%;
+c = %%"c"%%;
+
+@Sintatico
+
+<A> ::= a | a <B> | c;
+<B> ::= a | b | c;

@@ -1,0 +1,45 @@
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top topnav"
+		role="navigation">
+		<div class="container topnav">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand topnav" href="#">Upg - Uno Parser
+					Generator</a>
+			</div>
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav navbar-left">
+					<li><a href="#guia">Guia</a></li>
+					<li><a href="#sobre">Sobre</a></li>
+					<li><a href="#" data-toggle="dropdown"
+						id="dropdownMenuExemplos">Exemplos <span class="caret"></span></a>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenuExemplos">
+							<li><a href="#" ng-click="carregarExemploBnf()">BNF</a></li>
+							<li><a href="#"
+								ng-click="carregarExemploExpressaoAritmetica()">Expressão
+									Aritmética Simples</a></li>
+							<li><a href="#" ng-click="carregarExemploRecursivo()">Expressão
+									Aritmética Simples (Recursiva)</a></li>
+							<li><a href="#" ng-click="carregarExemploNaoFatorado()">Exemplo
+									não fatorado</a></li>
+						</ul></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#" ng-click="executarCodigoTeste()">Executar</a></li>
+					<li><a href="#" ng-click="baixarProjeto()">Baixar</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+</body>
+</html>

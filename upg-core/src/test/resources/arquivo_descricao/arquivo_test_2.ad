@@ -1,0 +1,19 @@
+@Header
+
+NomeProjeto = "Valor";
+Pacote = "Valor";
+Versao = "Valor";
+
+@Lexico
+
+ID = ([ \t\n\r]+) @Ignorar @Callback;
+SUCO = ([A-Z]) @Callback;
+TESTE = ([A-Za-z]);
+TESTE2 = ([A-Za-z]) @Callback @Ignorar;
+
+@Sintatico
+
+<S> ::= <A> a;
+<A> ::= b;
+
+/* Esse é um comentário */

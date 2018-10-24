@@ -1,0 +1,20 @@
+@Header
+
+NomeProjeto = "Expressao-Aritmetica";
+Pacote = "br.com.expressao";
+Versao = "1.0.0.0";
+TransformarGramatica = true;
+
+@Lexico
+
+MAIS = %%"+"%%;
+VEZES = %%"*"%%;
+NUMERO = %%[0-9]+%%;
+LEFT_PAREN = %%"("%%;
+RIGHT_PAREN = %%")"%%;
+
+@Sintatico
+
+<Expressao> ::= <Expressao> MAIS <Termo> | <Termo>;
+<Termo> ::= <Termo> VEZES <Fator> | <Fator>;
+<Fator> ::= LEFT_PAREN <Expressao> RIGHT_PAREN | NUMERO;

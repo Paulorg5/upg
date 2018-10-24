@@ -1,0 +1,19 @@
+@Header
+
+NomeProjeto = "Meu Projeto";
+Pacote = "br.com.meuprojeto";
+Versao = "1.0";
+
+@Lexico
+
+i = %%"i"%%;
+t = %%"t"%%;
+e = %%"e"%%;
+a = %%"a"%%;
+b = %%"b"%%;
+
+@Sintatico
+
+<S> ::= i <E> | i <E> <B> | e <E> | e <E> <B>;
+<E> ::= b;
+<B> ::= c;

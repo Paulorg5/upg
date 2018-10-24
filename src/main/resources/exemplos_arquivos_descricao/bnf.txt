@@ -1,0 +1,29 @@
+@Header
+
+NomeProjeto = "BNF";
+Pacote = "br.com.bnf";
+Versao = "1.0.0.0";
+TransformarGramatica = false;
+
+@Lexico
+
+S_MAIOR = %%">"%%;
+S_MENOR = %%"<"%%;
+S_ATRIBUICAO = %%"::="%%;
+S_END = %%";"%%;
+S_OU = %%"|"%%;
+LITERAL = %%\"[^\"]*\"%%;
+ID = %%[_a-zA-Z][_a-zA-Z0-9]{0,30}%%;
+EPSILON = %%"£"%%;
+
+@Sintatico
+
+<Sintaxe> ::= <Regra> <SintaxeF>;
+<SintaxeF> ::= <Sintaxe> | £;
+<Regra> ::= S_MENOR <NomeRegra> S_MAIOR S_ATRIBUICAO <Expressao> S_END;
+<Expressao> ::= <Lista> <ExpressaoF>;
+<ExpressaoF> ::= S_OU <Expressao> | £;
+<Lista> ::= <Termo> <ListaF>;
+<ListaF> ::= <Lista> | £;
+<Termo> ::= LITERAL | S_MENOR <NomeRegra> S_MAIOR | EPSILON | ID;
+<NomeRegra> ::= ID;

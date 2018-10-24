@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-br" ng-app="app">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="">
+
+<title>Upg - Uno Parser Generator</title>
+
+<script src="lib/sweetalert/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="lib/sweetalert/sweetalert.css">
+<link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="lib/codemirror/codemirror.css" rel="stylesheet">
+<script src="lib/angular/angular.js"></script>
+<script src="lib/codemirror/codemirror.js"></script>
+<script src="lib/codemirror/ui-codemirror.min.js"></script>
+<script src="js/app.js"></script>
+<script src="lib/smarttable/smart-table.js"></script>
+<script src="js/controllers/homeCtrl.js"></script>
+<script src="js/controllers/infoCtrl.js"></script>
+<script src="js/services/upgAPIService.js"></script>
+<script src="js/value/configValue.js"></script>
+<script src="js/directives/pageSelect.js"></script>
+
+<link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+	type="text/css">
+<link
+	href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic"
+	rel="stylesheet" type="text/css">
+<link href="lib/jstree/themes/default/style.min.css" rel="stylesheet"
+	type="text/css">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+	<div style="display: inline;" id="homeCtrl" ng-controller="homeCtrl">
+		<div ng-include="'view/nav/navegacao.html'"></div>
+		<a name="ferramenta"></a>
+		<div class="container-ferramenta">
+			<div id="ten" class="split split-horizontal">
+				<div id="twelve" class="split split-vertical content">
+					<textarea ui-codemirror="cmOption"
+						ng-model="entrada.codigoArquivoDescricao"></textarea>
+				</div>
+				<div id="thirteen" class="split split-vertical content">
+					<textarea ui-codemirror="cmOption" ng-model="entrada.codigoTeste"></textarea>
+				</div>
+			</div>
+			<div id="eleven" class="split split-horizontal content">
+				<div class="col-md-12">
+					<div class="panel with-nav-tabs panel-default">
+						<div class="panel-heading">
+							<ul class="nav nav-tabs">
+								<li class="active"><a href="#tabConteudoCST"
+									data-toggle="tab">CST (Concrete Syntax Tree)</a></li>
+								<li class="dropdown"><a href="#" data-toggle="dropdown">GLC<span
+										class="caret"></span></a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="#tabConteudoGLCInformada" data-toggle="tab">Gramática
+												informada</a></li>
+										<li><a href="#tabConteudoGLCSemRecursao"
+											data-toggle="tab">Gramática sem recursão</a></li>
+										<li><a href="#tabConteudoGLCFatorada" data-toggle="tab">Gramática
+												fatorada</a></li>
+										<li><a href="#tabConteudoGLCFinal" data-toggle="tab">Gramática
+												final</a></li>
+									</ul></li>
+								<li class="dropdown"><a href="#" data-toggle="dropdown">Tokens<span
+										class="caret"></span></a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="#tabConteudoDescricaoLexica"
+											data-toggle="tab">Descrição léxica</a></li>
+										<li><a href="#tabConteudoTokens" data-toggle="tab">Tokens</a></li>
+									</ul></li>
+								<li class="dropdown"><a href="#" data-toggle="dropdown">LL1<span
+										class="caret"></span></a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="#tabConteudoFirstFollow" data-toggle="tab">First/Follow</a></li>
+										<li><a href="#tabConteudoTabelaMovimento"
+											data-toggle="tab">Tabela Movimento</a></li>
+										<li><a href="#tabConteudoPilhaParsing" data-toggle="tab">Pilha
+												de parsing</a></li>
+									</ul></li>
+								<li><a href="#tabTestadorRegExp" data-toggle="tab">Testador
+										RegExp</a></li>
+							</ul>
+						</div>
+						<div class="panel-body">
+							<div class="tab-content">
+								<div class="tab-pane fade in active" id="tabConteudoCST">
+									<div>
+										<input class="search-input form-control"
+											placeholder="Buscar nó"></input>
+									</div>
+									<h5>Árvore:</h5>
+									<div id="cst"></div>
+								</div>
+								<div class="tab-pane fade" id="tabConteudoGLCInformada">
+									<textarea class="form-control"
+										ng-model="gramaticas.glcInformada" disabled="disabled"></textarea>
+								</div>
+								<div class="tab-pane fade" id="tabConteudoGLCSemRecursao">
+									<textarea class="form-control"
+										ng-model="gramaticas.glcSemRecursao" disabled="disabled"></textarea>
+								</div>
+								<div class="tab-pane fade" id="tabConteudoGLCFatorada">
+									<textarea class="form-control"
+										ng-model="gramaticas.glcFatorada" disabled="disabled"></textarea>
+								</div>
+								<div class="tab-pane fade" id="tabConteudoGLCFinal">
+									<textarea class="form-control" ng-model="gramaticas.glcFinal"
+										disabled="disabled"></textarea>
+								</div>
+
+								<div class="tab-pane fade" id="tabConteudoDescricaoLexica">
+									<table st-safe-src="descricaoLexica"
+										st-table="descricaoLexicaList" class="table table-bordered">
+										<thead>
+											<tr>
+												<th st-sort="id">ID</th>
+												<th st-sort="regex">Regex</th>
+												<th st-sort="ignorar">Ignorar</th>
+											</tr>
+											<tr>
+												<th colspan="12"><input st-search
+													placeholder="Busca global" class="input-sm form-control"
+													type="search" /></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="descricao in descricaoLexicaList">
+												<td>{{descricao.id}}</td>
+												<td>{{descricao.regex}}</td>
+												<td>{{descricao.ignorar}}</td>
+											</tr>
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="5" class="text-center">
+													<div st-items-by-page="9" st-pagination=""
+														st-template="view/pagination/pagination.custom.html"></div>
+												</td>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="tabConteudoTokens">
+									<table st-safe-src="tokens" st-table="tokensList"
+										class="table table-bordered">
+										<thead>
+											<tr>
+												<th st-sort="tipo">Tipo</th>
+												<th st-sort="valor">Valor</th>
+												<th st-sort="linha">Linha</th>
+												<th st-sort="colInicio">Col. Início</th>
+												<th st-sort="colFim">Col. Fim</th>
+											</tr>
+											<tr>
+												<th colspan="12"><input st-search
+													placeholder="Busca global" class="input-sm form-control"
+													type="search" /></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="token in tokensList">
+												<td>{{token.tipoString | uppercase}}</td>
+												<td>{{token.valor}}</td>
+												<td>{{token.linha}}</td>
+												<td>{{token.inicio}}</td>
+												<td>{{token.fim}}</td>
+											</tr>
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="5" class="text-center">
+													<div st-items-by-page="9" st-pagination=""
+														st-template="view/pagination/pagination.custom.html"></div>
+												</td>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="tabConteudoFirstFollow">
+									<table st-safe-src="conjuntosFirstFollow"
+										st-table="conjuntosFirstFollowList"
+										class="table table-bordered">
+										<thead>
+											<tr>
+												<th st-sort="naoTerminal">Não Terminal</th>
+												<th st-sort="first">First</th>
+												<th st-sort="follow">Follow</th>
+											</tr>
+											<tr>
+												<th colspan="12"><input st-search
+													placeholder="Busca global" class="input-sm form-control"
+													type="search" /></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="conjunto in conjuntosFirstFollowList">
+												<td>{{conjunto.naoTerminal}}</td>
+												<td>{{conjunto.first}}</td>
+												<td>{{conjunto.follow}}</td>
+											</tr>
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="5" class="text-center">
+													<div st-items-by-page="9" st-pagination=""
+														st-template="view/pagination/pagination.custom.html"></div>
+												</td>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="tabConteudoTabelaMovimento"
+									style="overflow: auto">
+									<table st-safe-src="tabelaMovimento.conteudo"
+										st-table="conteudoTabelaMovimentoList"
+										class="table table-bordered">
+										<thead>
+											<tr>
+												<th ng-repeat="header in tabelaMovimento.header">{{header}}</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="conteudo in conteudoTabelaMovimentoList">
+												<td ng-repeat="c in conteudo track by $index">{{c}}</td>
+											</tr>
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="5" class="text-center">
+													<div st-items-by-page="9" st-pagination=""
+														st-template="view/pagination/pagination.custom.html"></div>
+												</td>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="tabConteudoPilhaParsing">
+									<table st-safe-src="pilhaParsing" st-table="pilhaParsingList"
+										class="table table-bordered">
+										<thead>
+											<tr>
+												<th>Pilha</th>
+												<th>Entrada</th>
+												<th>Produção</th>
+												<th>Ação</th>
+											</tr>
+											<tr>
+												<th colspan="12"><input st-search
+													placeholder="Busca global" class="input-sm form-control"
+													type="search" /></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="registro in pilhaParsingList">
+												<td>{{registro.valorPilha}}</td>
+												<td><button type="button"
+														class="btn btn-primary btn-sm" data-toggle="modal"
+														data-target="#myModal"
+														ng-click="addParaVisualizar(registro)">
+														{{registro.valorEntrada}}</button></td>
+												<td>{{registro.producao}}</td>
+												<td>{{registro.acao}}</td>
+											</tr>
+										</tbody>
+										<tfoot>
+											<tr>
+												<td colspan="5" class="text-center">
+													<div st-items-by-page="9" st-pagination=""
+														st-template="view/pagination/pagination.custom.html"></div>
+												</td>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="tabTestadorRegExp">
+									<form>
+										<div class="form-group">
+											<label for="inputExpressaoRegular">Expressão Regular</label>
+											<input class="form-control" id="inputExpressaoRegular"
+												ng-model="testeRegExp.regexpTeste" placeholder="[a-zA-Z]">
+										</div>
+										<div class="form-group">
+											<label for="inputStringTeste">String Teste</label>
+											<textarea class="form-control" id="inputStringTeste"
+												cols="10" rows="15" ng-model="testeRegExp.stringTesteRegexp"
+												placeholder="String de teste"></textarea>
+										</div>
+										<button ng-click="testarRegExp()" class="btn btn-primary">Testar</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">Visualizar entrada</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="simboloAnalisado">Símbolo sendo analisado</label> <input
+								type="text" class="form-control" id="simboloAnalisado"
+								ng-model="registroParaVisualizar.valorEntrada"
+								disabled="disabled">
+						</div>
+						<div class="form-group">
+							<label for="linha">Linha</label> <input type="text"
+								class="form-control" id="linha"
+								ng-model="registroParaVisualizar.linha" disabled="disabled">
+						</div>
+						<div class="form-group">
+							<label for="colunaInicial">Coluna inicial</label> <input
+								type="text" class="form-control" id="colunaInicial"
+								ng-model="registroParaVisualizar.colunaInicial"
+								disabled="disabled">
+						</div>
+						<div class="form-group">
+							<label for="colunaFinal">Coluna final</label> <input type="text"
+								class="form-control" id="colunaFinal" value="4"
+								ng-model="registroParaVisualizar.colunaFinal"
+								disabled="disabled">
+						</div>
+						<div class="form-group">
+							<label for="entradaCompleta">Entrada parcial</label>
+							<textarea class="form-control" id="entradaCompleta" rows="3"
+								ng-model="registroParaVisualizar.entradaParcial"
+								disabled="disabled"></textarea>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div ng-controller="infoCtrl" ng-include="'view/guia/guia.html'"></div>
+	<div ng-include="'view/sobre/sobre.html'"></div>
+	<div ng-include="'view/footer/banner.html'"></div>
+	<div ng-include="'view/footer/footer.html'"></div>
+
+	<script src="lib/jquery/jquery-3.2.1.js"></script>
+	<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+	<script src="lib/splitjs/split.min.js"></script>
+	<script src="lib/jstree/jstree.min.js"></script>
+	<script src="lib/jstree/ngJsTree.min.js"></script>
+	<script src="js/init.js"></script>
+</body>
+</html>

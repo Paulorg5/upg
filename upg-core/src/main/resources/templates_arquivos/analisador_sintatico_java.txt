@@ -1,0 +1,220 @@
+package <pacote>.sintatico;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+
+import <pacote>.utils.LeitorResourceSerializado;
+import io.github.paulorg5.ast.No;
+import io.github.paulorg5.ast.NoProducao;
+import io.github.paulorg5.ast.NoToken;
+import io.github.paulorg5.ast.Token;
+import io.github.paulorg5.exceptions.AnalisadorSintaticoException;
+import io.github.paulorg5.glc.EOF;
+import io.github.paulorg5.glc.Epsilon;
+import io.github.paulorg5.glc.NaoTerminal;
+import io.github.paulorg5.glc.Producao;
+import io.github.paulorg5.glc.Simbolo;
+import io.github.paulorg5.glc.Terminal;
+import io.github.paulorg5.ll1.ChaveTabela;
+import io.github.paulorg5.ll1.Elemento;
+import io.github.paulorg5.ll1.TabelaMovimentoLL1;
+
+public class AnalisadorSintatico {
+
+	private static final String NOME_ARQUIVO_SER_TABELA_MOVIMENTO = "TabelaMovimento.ser";
+
+	private static final String NOME_ARQUIVO_SER_FIRST = "First.ser";
+
+	private Map<ChaveTabela, Producao> tabela;
+
+	private NaoTerminal ntInicial;
+
+	private Map<NaoTerminal, Set<Simbolo>> first;
+
+	private Token proximaMarca;
+
+	private Iterator<Token> itrTokens;
+
+	private Stack<Simbolo> pilha;
+
+	private Stack<Elemento> elementos = new Stack<>();
+
+	@SuppressWarnings("unchecked")
+	public AnalisadorSintatico() {
+		TabelaMovimentoLL1 tabelaMovimentoLL1 = (TabelaMovimentoLL1) LeitorResourceSerializado.getInstance()
+				.ler(NOME_ARQUIVO_SER_TABELA_MOVIMENTO);
+		this.ntInicial = tabelaMovimentoLL1.getNtInicial();
+		this.tabela = tabelaMovimentoLL1.getTabelaMovimentos();
+		this.first = (Map<NaoTerminal, Set<Simbolo>>) LeitorResourceSerializado.getInstance()
+				.ler(NOME_ARQUIVO_SER_FIRST);
+	}
+
+	public No parse(List<Token> tokens) throws Exception {
+		if (tokens.isEmpty()) {
+			throw new Exception("A entrada está vazia, parse finalizado!");
+		}
+
+		// Assume que $ marca o fim da pilha e da entrada
+		adicionarEOFNoFimDaEntrada(tokens);
+		this.pilha = inicializarPilha();
+
+		this.itrTokens = tokens.iterator();
+		this.proximaMarca = itrTokens.next();
+
+		while (!isEntradaAceita()) {
+			if (pilha.peek() instanceof Terminal) {
+				if (pilha.peek().equals(proximaMarca.getSimbolo())) {
+					elementos.push(new Elemento(proximaMarca));
+					casamento();
+				} else {
+					criarMensagemErroCasamento();
+				}
+			} else if (pilha.peek() instanceof NaoTerminal) {
+				// Sendo que o topo da pilha é um Não Terminal e a nossa lista
+				// de Tokens possui apenas Terminais
+				// É necessário encontrar uma produção
+				Producao p = encontrarProducao();
+
+				if (p == null) {
+					criarMensagemErroEncontrarProducao();
+				}
+
+				elementos.push(new Elemento(p));
+
+				// Nesse caso tem produção para usar
+				// Se a produção não tiver Epsilon, então usa ela
+				if (isProducaoComEpsilon(p)) {
+					pilha.pop();
+				} else {
+					gerar(p);
+				}
+			}
+
+			if (isEntradaAceita()) {
+				break;
+			}
+		}
+
+		return criarArvore();
+	}
+
+	private void criarMensagemErroEncontrarProducao() throws AnalisadorSintaticoException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Falha ao realizar o parser do símbolo ");
+		sb.append(proximaMarca.getValor());
+		sb.append(" em ");
+		sb.append(" Linha: " + proximaMarca.getLinha());
+		sb.append(" Coluna: " + proximaMarca.getColunaInicio() + " - " + proximaMarca.getColunaFim());
+		sb.append(" Com o topo da pilha em " + pilha.peek().getValor());
+		sb.append(" As escolhas possíveis com o topo da pilha são: \n");
+		sb.append(getEscolhasPossivesNt(pilha.peek()));
+		sb.append(
+				"Obs: Possivelmente está faltando um símbolo antes do símbolo informado na mensagem de erro, e que está nas escolhas possíveis de ");
+		sb.append(pilha.peek().getValor());
+		throw new AnalisadorSintaticoException(sb.toString());
+	}
+
+	private void criarMensagemErroCasamento() throws AnalisadorSintaticoException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Era esperado o símbolo ");
+		sb.append(pilha.peek());
+		sb.append(", mas foi encontrado ");
+
+		if (proximaMarca.getSimbolo().equals(new EOF())) {
+			sb.append(proximaMarca.getSimbolo().getValor());
+			sb.append(" ao final da entrada");
+		} else {
+			sb.append(proximaMarca.getSimbolo().getValor());
+			sb.append(" em ");
+			sb.append(" Linha: " + proximaMarca.getLinha());
+			sb.append(" Coluna: " + proximaMarca.getColunaInicio() + " - " + proximaMarca.getColunaFim());
+		}
+
+		throw new AnalisadorSintaticoException(sb.toString());
+	}
+
+	private String getEscolhasPossivesNt(Simbolo simbolo) {
+		StringBuilder sb = new StringBuilder();
+		Set<Simbolo> escolhas = first.get((NaoTerminal) simbolo);
+
+		for (Simbolo s : escolhas) {
+			sb.append(s + "\n");
+		}
+
+		return sb.toString();
+	}
+
+	private void adicionarEOFNoFimDaEntrada(List<Token> tokens) {
+		Token eof = new Token(new EOF());
+		eof.setValor("EoF ($)");
+		tokens.add(eof);
+	}
+
+	private boolean isProducaoComEpsilon(Producao p) {
+		return p.getSimbolos().contains(new Epsilon());
+	}
+
+	private void gerar(Producao p) {
+		pilha.pop();
+		colocaProducaoInvertidaNaPilha(p);
+	}
+
+	private No criarArvore() {
+		Stack<No> nos = new Stack<No>();
+
+		do {
+			Elemento elemento = elementos.pop();
+
+			if (elemento.getProducao() != null) {
+				NoProducao noProducao = new NoProducao(elemento.getProducao());
+				if (!noProducao.getProducao().getSimbolos().contains(new Epsilon())) {
+					while (!noProducao.isCheio()) {
+						noProducao.addFilho(nos.pop());
+					}
+				} else {
+					noProducao.addFilho(new NoToken(new Token(new Epsilon()), true));
+				}
+
+				nos.push(noProducao);
+			} else {
+				nos.push(new NoToken(elemento.getToken(), false));
+			}
+
+		} while (!elementos.isEmpty());
+
+		return nos.pop();
+	}
+
+	private void colocaProducaoInvertidaNaPilha(Producao p) {
+		for (int i = p.getSimbolos().size() - 1; i >= 0; --i) {
+			pilha.push(p.getSimbolos().get(i));
+		}
+	}
+
+	private Producao encontrarProducao() {
+		return tabela.get(new ChaveTabela((NaoTerminal) pilha.peek(), (Terminal) proximaMarca.getSimbolo()));
+	}
+
+	private void casamento() {
+		pilha.pop();
+		avancaEntrada();
+	}
+
+	private void avancaEntrada() {
+		this.proximaMarca = this.itrTokens.next();
+	}
+
+	private boolean isEntradaAceita() {
+		return pilha.peek().equals(new EOF()) && proximaMarca.getSimbolo().equals(new EOF());
+	}
+
+	private Stack<Simbolo> inicializarPilha() {
+		Stack<Simbolo> pilha = new Stack<>();
+		pilha.push(new EOF());
+		pilha.push(ntInicial);
+		return pilha;
+	}
+}

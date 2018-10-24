@@ -1,0 +1,19 @@
+@Header
+
+NomeProjeto = "Meu Projeto";
+Pacote = "br.com.meuprojeto";
+Versao = "1.0";
+
+@Lexico
+
+MAIS = %%"+"%%;
+VEZES = %%"*"%%;
+ID = %%[0-9]{0,30}%%;
+LEFT_PAREN = %%"("%%;
+RIGHT_PAREN = %%")"%%;
+
+@Sintatico
+
+<E> ::= <E> MAIS <T> | <T>;
+<T> ::= <T> VEZES <F> | <F>;
+<F> ::= LEFT_PAREN <E> RIGHT_PAREN | ID;

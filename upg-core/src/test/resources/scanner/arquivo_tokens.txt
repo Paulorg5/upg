@@ -1,0 +1,22 @@
+@Header
+
+NomeProjeto = "Valor";
+Pacote = "Valor";
+Versao = "Valor";
+
+@Lexico
+
+ID = ([ \t\n\r]+) @Ignorar;
+SUCO = ([A-Z]);
+TESTE = ([A-Za-z]);
+TESTE2 = ([A-Za-z]);
+TESTE3 = ("literal");
+NT = ([<_a-zA-Z][_a-zA-Z0-9>]{0,30});
+REGEX = ("("[^")"]+")");
+
+@Sintatico
+
+<S> ::= <A> a;
+<A> ::= b;
+
+/* Esse é um comentário */

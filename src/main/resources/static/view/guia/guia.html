@@ -1,0 +1,164 @@
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	<a name="guia"></a>
+	<div class="content-section-a">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12 col-sm-12">
+					<hr class="section-heading-spacer">
+					<div class="clearfix"></div>
+					<h2 class="section-heading">Guia</h2>
+					<h4>1) Arquivo de descrição</h4>
+					<p align="justify" class="lead">&emsp;Os analisadores léxico e
+						sintático serão gerados com base no código informado no campo de
+						texto referente ao arquivo de descrição. Um exemplo de arquivo de
+						descrição é apresentado abaixo:</p>
+					<textarea ui-codemirror="cmOptLeitura"
+						ng-model="exemploArquivoDescricao"></textarea>
+					<p align="justify" class="lead">&emsp;A BNF (Backus-Naur Form)
+						para esse arquivo é apresentada abaixo:</p>
+					<textarea ui-codemirror="cmOptLeitura"
+						ng-model="bnfArquivoDescricao"></textarea>
+					<p align="justify" class="lead">
+						&emsp;Por padrão a ferramenta já adiciona a expressão regular [
+						\n\t\r]+ com a anotação @Ignorar, não sendo necessário informar no
+						arquivo. As outras expressões regulares devem ser informadas e
+						precisam seguir o modelo apresentado em <a
+							href="http://www.brics.dk/automaton/doc/index.html"
+							target="_blank">Brics.dk.</a>
+					</p>
+					<h4>2) Divisão arquivo de descrição</h4>
+					<p align="justify" class="lead">&emsp;O código do arquivo é
+						divido em três partes, as anotações @Header, @Lexico e @Sintatico.</p>
+					<h5>@Header</h5>
+					<p align="justify" class="lead">&emsp;Na anotação @Header é
+						obrigatório informar três configurações: NomeProjeto, Pacote e
+						Versao. A configuração Autor não é obrigatória, mas pode ser
+						informada.</p>
+					<h5>@Lexico</h5>
+					<p align="justify" class="lead">&emsp;Na anotação @Lexico é
+						informado as regras léxicas para o analisador léxico. Regras que
+						devem ser ignoradas precisam estar marcadas com a anotação
+						@Ignorar. É necessário ter uma atenção no momento de posicionar as
+						regras, pois a posição é importante e vai influenciar a
+						classificação dos símbolos. Por exemplo, se for definido uma regra
+						para Identificadores e logo abaixo for defindo uma regra para uma
+						palavra reservada qualquer, essa palavra reservada não será
+						classificada corretamente. Nesse caso será classificada como
+						Identificador.</p>
+					<h5>@Sintatico</h5>
+					<p align="justify" class="lead">&emsp;Na anotação @Sintatico é
+						informado a gramática livre de contexto que será utilizada pelo
+						analisador sintático LL1. Na gramática são aceitos Epsilon (£),
+						Terminais (É o ID da regra léxica) e Não Terminais (Marcados com
+						&lt; e &gt;).</p>
+					<h4>3) Dúvidas sobre como implementar o arquivo de descrição?</h4>
+					<p align="justify" class="lead">&emsp;No momento do
+						desenvolvimento do arquivo de descrição podem surgir algumas
+						dúvidas, seja a respeito da sintaxe ou das expressões regulares. A
+						ferramenta disponibiliza dois exemplos para você estudar, clicando
+						em Exemplos é mostrado os exemplos: BNF (Arquivo descrição com a
+						implementação da BNF) e Expressão Aritméticas Simples (Exemplo
+						clássico utilizado em livros de compiladores). Os dois exemplos
+						são LL1 e podem ser testados. Se houver dúvidas a respeito da
+						implementação das expressões regulares, é possível utilizar o
+						testador de expressão regular. Ele está visível na tela principal,
+						no lado direito na Tab Testar RegExp.</p>
+					<h4>4) Como vou baixar o projeto?</h4>
+					<p align="justify" class="lead">&emsp;Ao finalizar o
+						desenvolvimento do arquivo de descrição é possível submeter ele a
+						ferramenta. Para submeter o arquivo deve ser clicado em Executar,
+						a ferramenta vai analisar o arquivo e apresentar na tela as
+						informações sobre o analisador léxico e sintático.</p>
+					<h4>5) Que informações a ferramenta disponibiliza durante os
+						testes?</h4>
+					<p align="justify" class="lead">&emsp;A seguir está sendo
+						apresentado um detalhamento de cada tela:</p>
+					<h5>CST (Concrete Syntax Tree)</h5>
+					<p align="justify" class="lead">&emsp;Nessa tela é possível
+						visualizar a árvore concreta de análise sintática. Essa árvore é
+						gerado quando você implementa corretamente o arquivo de descrição
+						e informa uma entrada de teste. Nessa tela também existe um campo
+						de busca, ele permite buscar os nós presentes na árvore. Abaixo
+						está sendo apresentado uma imagem com um exemplo de CST.</p>
+					<img src="img/cst.png" class="center-block img-responsive rounded"
+						alt="Tela CST (Concrete Syntax Tree)">
+					<h5>GLC</h5>
+					<p align="justify" class="lead">&emsp;Na tela GLC você pode
+						visualizar a gramática livre de contexto informada na ferramenta.</p>
+					<h5>Tokens</h5>
+					<p align="justify" class="lead">&emsp;Nessa tela fica
+						disponível as regras léxicas que serão utilizadas pelo analisador
+						léxico e os tokens que foram classificados utilizando essas
+						regras, caso tenha sido informado alguma entrada.</p>
+					<p align="justify" class="lead">&emsp;A tela de descrição
+						léxica é apresentada abaixo:</p>
+					<img src="img/descricaoLexica.png"
+						class="center-block img-responsive rounded"
+						alt="Tela de descrição léxica">
+					<p align="justify" class="lead">&emsp;A tela de Tokens
+						classificados é apresentada abaixo:</p>
+					<img src="img/tokensClassificados.png"
+						class="center-block img-responsive rounded"
+						alt="Tela de tokens classificados">
+					<h5>LL1</h5>
+					<p align="justify" class="lead">&emsp;Na tela LL1 é possível
+						visualizar os conjuntos First/Follow, Tabela de análise sintática
+						ou tabela de movimentos e a pilha de parsing.</p>
+					<p align="justify" class="lead">&emsp;A tela com os conjuntos
+						First e Follow é apresentada abaixo:</p>
+					<img src="img/firstFollow.png"
+						class="center-block img-responsive rounded"
+						alt="Tela First/Follow">
+					<p align="justify" class="lead">&emsp;A tela com a tabela de
+						análise sintática é apresentada abaixo:</p>
+					<img src="img/tabelaMovimento.png"
+						class="center-block img-responsive rounded"
+						alt="Tabela de análise sintática">
+					<p align="justify" class="lead">&emsp;A pilha de parsing é
+						apresentada abaixo:</p>
+					<img src="img/pilhaParsing.png"
+						class="center-block img-responsive rounded" alt="Pilha parsing">
+					<h5>Testador RegExp</h5>
+					<p align="justify" class="lead">&emsp;Nessa tela é
+						disponibilizado um formulário para testar as expressões regulares.
+						A engine de expressão regular utilizada no teste é a mesma que
+						será utilizada pelo analisador léxico.</p>
+					<p align="justify" class="lead">&emsp;A tela para testar as
+						expressões é apresentada abaixo:</p>
+					<img src="img/telaTesteRegex.png"
+						class="center-block img-responsive rounded"
+						alt="Tela para testar Regex">
+					<p align="justify" class="lead">&emsp;Para conferir as
+						informações do analisador léxico é possível consultar as telas de
+						Descrição léxica e Tokens, disponível no botão Tokens.</p>
+					<p align="justify" class="lead">&emsp;É possível verificar as
+						informações do analisador sintático nas telas CST (Concrete Syntax
+						Tree), GLC e LL1. Essas telas possuem várias informações sobre o
+						analisador sintático LL1. Algumas informações são apresentadas
+						somente quando é submetido junto ao arquivo de descrição uma
+						entrada de teste, como a CST e a Pilha de Parsing. A entrada de
+						teste é informada na caixa de texto que está localizada abaixo da
+						caixa de texto da descrição do arquivo.</p>
+					<p align="justify" class="lead">&emsp;Se durante o
+						processamento do arquivo houver algum erro, seja ele de sintaxe ou
+						lógica, será apresentado mensagens de erro na tela.</p>
+					<h4>6) O que acontece quando eu clicar em Baixar?</h4>
+					<p align="justify" class="lead">&emsp;Quando você quiser gerar
+						o projeto é só clicar no botão Baixar, a ferramenta vai verificar
+						novamente o arquivo de descrição e gerar os códigos na linguagem
+						de programação Java, na versão 8, contendo o analisador léxico e
+						sintático. Também é acrescentado ao projeto algumas classes
+						utilitárias. O projeto gerado está configurado com todas as
+						depêndencias necessárias para funcionar utilizando o Maven. Após
+						baixar o projeto você pode importar ele para qualquer IDE que
+						suporta Maven ou utilizar seu editor de texto preferido.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

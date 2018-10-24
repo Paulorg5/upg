@@ -1,0 +1,8 @@
+<Sintaxe> ::= 
+	<Regra> | 
+	<Regra> <Sintaxe> | 
+	£;
+	
+<SintaxeF> ::= 
+	<Sintaxe> | 
+	£;

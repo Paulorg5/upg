@@ -1,0 +1,17 @@
+@Header
+
+NomeProjeto = "Teste";
+Pacote = "Teste";
+Versao = "Teste";
+
+@Lexico
+
+WS = ([ \t\n\r]+);
+
+@Sintatico
+
+<E> ::= <T> <EE>;
+<EE> ::= "+" <T> <EE> | £;
+<T> ::= <F> <TT>;
+<TT> ::= "*" <F> <TT> | £;
+<F> ::= "(" <E> ")" | ID;

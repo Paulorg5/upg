@@ -1,0 +1,29 @@
+package <pacote>.utils;
+
+import io.github.paulorg5.ast.No;
+import io.github.paulorg5.ast.NoProducao;
+import io.github.paulorg5.ast.NoToken;
+
+public class ArvoreUtils {
+
+	public static void visitar(No arvore) {
+		if (arvore instanceof NoProducao) {
+			System.out.println("Visitou o Não Terminal " + ((NoProducao) arvore).getProducao().getNt());
+			for (No filho : ((NoProducao) arvore).getFilhos()) {
+				visitar(filho);
+			}
+		} else {
+			System.out.println("Tem o Token " + ((NoToken) arvore).getValor());
+		}
+	}
+
+	public static void visitarProducao(No arvore) {
+		if (arvore instanceof NoProducao) {
+			System.out.println("Visitou a produção: " + ((NoProducao) arvore).getProducao());
+			for (No filho : ((NoProducao) arvore).getFilhos()) {
+				visitarProducao(filho);
+			}
+		}
+	}
+
+}
